@@ -1,4 +1,3 @@
-get test app working for both debounce and throttle
 figure out how to include own version of redux-saga here
 add options to test app for leading/trailing
 update tests

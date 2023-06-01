@@ -1,5 +1,9 @@
-import { debounce, put, throttle } from "redux-saga/effects";
-import createSagaMiddleware from "redux-saga";
+import {
+  debounce,
+  put,
+  throttle,
+} from "../redux-saga/packages/redux-saga/effects";
+import createSagaMiddleware from "../redux-saga/packages/redux-saga";
 import { createStore, applyMiddleware } from "redux";
 
 function* addLine(divId) {
@@ -7,14 +11,38 @@ function* addLine(divId) {
 }
 
 function* lineSaga() {
-  yield debounce(200, "mousemove", addLine, "debounce");
+  yield debounce(
+    { delayLength: 200, leading: true, trailing: false },
+    "mousemove",
+    addLine,
+    "debounce-leading"
+  );
+  yield debounce(
+    { delayLength: 200, leading: false, trailing: true },
+    "mousemove",
+    addLine,
+    "debounce-trailing"
+  );
+  yield debounce(
+    { delayLength: 200, leading: true, trailing: true },
+    "mousemove",
+    addLine,
+    "debounce-leading-and-trailing"
+  );
   yield throttle(200, "mousemove", addLine, "throttle");
 }
 
 const sagaMiddleware = createSagaMiddleware();
 
+const initialState = {
+  "debounce-leading": 0,
+  "debounce-trailing": 0,
+  "debounce-leading-and-trailing": 0,
+  throttle: 0,
+};
+
 const store = createStore(
-  (state = { debounce: 0, throttle: 0 }, action) => {
+  (state = initialState, action) => {
     if (action.type === "add-line") {
       return {
         ...state,
@@ -24,12 +52,12 @@ const store = createStore(
       return state;
     }
   },
-  { debounce: 0, throttle: 0 },
+  initialState,
   applyMiddleware(sagaMiddleware)
 );
 
 store.subscribe((...args) => {
-  ["debounce", "throttle"].forEach((divId) => {
+  Object.keys(initialState).forEach((divId) => {
     const count = store.getState()[divId];
     document.getElementById(divId).innerHTML = "█".repeat(count);
   });
