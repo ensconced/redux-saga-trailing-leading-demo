@@ -13,23 +13,23 @@ function* addLine(divId) {
 function* lineSaga() {
   yield debounce(
     { delayLength: 200, leading: true, trailing: false },
-    "mousemove",
+    "keydown",
     addLine,
     "debounce-leading"
   );
   yield debounce(
     { delayLength: 200, leading: false, trailing: true },
-    "mousemove",
+    "keydown",
     addLine,
     "debounce-trailing"
   );
   yield debounce(
     { delayLength: 200, leading: true, trailing: true },
-    "mousemove",
+    "keydown",
     addLine,
     "debounce-leading-and-trailing"
   );
-  yield throttle(200, "mousemove", addLine, "throttle");
+  yield throttle(200, "keydown", addLine, "throttle");
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -65,6 +65,6 @@ store.subscribe((...args) => {
 
 sagaMiddleware.run(lineSaga);
 
-document.addEventListener("mousemove", () => {
-  store.dispatch({ type: "mousemove" });
+document.addEventListener("keydown", () => {
+  store.dispatch({ type: "keydown" });
 });
