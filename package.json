@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "key-events": "^0.1.1",
+    "keypress": "^0.2.1",
+    "lodash": "^4.17.21",
     "redux": "^4.2.1",
     "redux-saga": "^1.2.3",
     "vite": "^4.3.9"

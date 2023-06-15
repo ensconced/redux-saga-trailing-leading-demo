@@ -1,10 +1,8 @@
-import {
-  debounce,
-  put,
-  throttle,
-} from "../redux-saga/packages/redux-saga/effects";
+import { debounce, put } from "../redux-saga/packages/redux-saga/effects";
 import createSagaMiddleware from "../redux-saga/packages/redux-saga";
 import { createStore, applyMiddleware } from "redux";
+
+const delayLength = 1000;
 
 function* addLine(divId) {
   yield put({ type: "add-line", divId });
@@ -12,24 +10,23 @@ function* addLine(divId) {
 
 function* lineSaga() {
   yield debounce(
-    { delayLength: 200, leading: true, trailing: false },
+    { delayLength, leading: true, trailing: false },
     "keydown",
     addLine,
     "debounce-leading"
   );
   yield debounce(
-    { delayLength: 200, leading: false, trailing: true },
+    { delayLength, leading: false, trailing: true },
     "keydown",
     addLine,
     "debounce-trailing"
   );
   yield debounce(
-    { delayLength: 200, leading: true, trailing: true },
+    { delayLength, leading: true, trailing: true },
     "keydown",
     addLine,
     "debounce-leading-and-trailing"
   );
-  yield throttle(200, "keydown", addLine, "throttle");
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -38,7 +35,6 @@ const initialState = {
   "debounce-leading": 0,
   "debounce-trailing": 0,
   "debounce-leading-and-trailing": 0,
-  throttle: 0,
 };
 
 const store = createStore(
